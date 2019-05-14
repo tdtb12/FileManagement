@@ -20,7 +20,6 @@ void moveFolder(){
     fstream file;
     file.open("Folder.txt");
     string folder_name,subfile;
-    string command;
     while(getline(file,folder_name)){
         if(folder_name!=customer){ /*customer Folder是要移動的目的，過濾掉*/
             cout<<"folder: "+folder_name<<endl;/*print all file*/
@@ -46,11 +45,20 @@ void moveFolder(){
     }
 }
 void rename(){
-    string customer_folder;
-    customer_folder+=customer;
-    chdir(customer_folder.c_str());
-    command="cmd /e:on /v:on /c \"for %f in (\".\\*"+customer+"*.*\") do (set \"n=%~nxf\" & set \"n=!n:"+customer+"-""=!\" & ren \"%~ff\" \"!n!\" )\"";
+    string customer_folder_path;
+    customer_folder_path+=customer;
+    chdir(customer_folder_path.c_str());
+    command="cmd /e:on /v:on /c \"for /r  %f in (\"*"+customer+"*\") do (set \"n=%~nxf\" & set \"n=!n:"+customer+"-=!\" & ren \"%~ff\" \"!n!\" )\"";
     system(command.c_str());
+    command="cmd /e:on /v:on /c \"for /r  %f in (\"*"+customer+"*\") do (set \"n=%~nxf\" & set \"n=!n:-"+customer+"=!\" & ren \"%~ff\" \"!n!\" )\"";
+    system(command.c_str());
+    command="cmd /e:on /v:on /c \"for /r  %f in (\"*"+customer+"*\") do (set \"n=%~nxf\" & set \"n=!n:"+customer+"=!\" & ren \"%~ff\" \"!n!\" )\"";
+    system(command.c_str());
+    command="cmd /e:on /v:on /c \"for /r /d %f in (\"*"+customer+"*\") do (set \"n=%~nxf\" & set \"n=!n:"+customer+"-=!\" & ren \"%~ff\" \"!n!\" )\"";
+    system(command.c_str());
+    command="cmd /e:on /v:on /c \"for /r /d %f in (\"*"+customer+"*\") do (set \"n=%~nxf\" & set \"n=!n:"+customer+"=!\" & ren \"%~ff\" \"!n!\" )\"";
+    system(command.c_str());
+    /*這兩行 /r /d不能合併為一行 不然子資料夾無法檔案抓取，無法重新命名*/
 }
 int main()
 {   char moduleFileName[MAX_PATH];
